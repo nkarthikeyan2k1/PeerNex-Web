@@ -1,8 +1,14 @@
 .navbar {
-  padding: 0.9rem 0;
+
+  background-color: var(--bg-color);
+  background-image: radial-gradient(circle at top right, rgba(var(--primary-rgb), 0.15), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(var(--tertiary-rgb), 0.05), transparent 30%);
+  background-attachment: fixed;
+  color: var(--text-color);
+
+  padding: 0.9rem 0px;
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(8px);
-  background-color: var(--background-color);
   position: sticky;
   top: 0;
   z-index: 999;

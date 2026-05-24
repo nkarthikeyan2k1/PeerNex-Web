@@ -2,38 +2,39 @@
   --bg-color: #ffffff;
   --text-color: #1f1f22;
   --text-muted: #71717a;
-  
+
   --primary: #9b51e0;
   --primary-rgb: 155, 81, 224;
-  
+
   --secondary: #e051d1;
   --secondary-rgb: 224, 81, 209;
-  
+
   --tertiary: #00b4bc;
   --tertiary-rgb: 0, 180, 188;
-  
+
   --error: #e02424;
   --error-rgb: 224, 36, 36;
-  
+
   --glass-bg: rgba(255, 255, 255, 0.6);
   --glass-border: rgba(0, 0, 0, 0.1);
   --input-bg: rgba(0, 0, 0, 0.05);
 }
 
+/* Dark mode overrides */
 .dark {
   --bg-color: #131316;
   --text-color: #e4e1e6;
   --text-muted: #cfc2d7;
-  
+
   --primary: #dcb8ff;
   --primary-rgb: 220, 184, 255;
-  
+
   --secondary: #ffaaf7;
   --secondary-rgb: 255, 170, 247;
-  
+
   --tertiary: #00dce5;
   --tertiary-rgb: 0, 220, 229;
-  
+
   --error: #ffb4ab;
   --error-rgb: 255, 180, 171;
 
@@ -42,7 +43,7 @@
   --input-bg: rgba(0, 0, 0, 0.25);
 }
 
-// Map SCSS variables to CSS variables for automatic theme switching
+/* Map CSS custom properties to SCSS variables */
 $bg-color: var(--bg-color);
 $text-color: var(--text-color);
 $text-muted: var(--text-muted);
