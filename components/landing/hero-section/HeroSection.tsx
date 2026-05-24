@@ -1,6 +1,8 @@
 import React from 'react'
 import { Video, Mic, MessageSquare } from 'lucide-react'
 import './hero-section.scss'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 const HeroSection = () => {
   return (
@@ -15,18 +17,20 @@ const HeroSection = () => {
       </p>
       
       <div className="cta-grid">
-        <button className="cta-button cta-button--tertiary glass-card glow-hover">
+        <Button variant='ghost' size='lg' className="cta-button cta-button--tertiary glass-card glow-hover">
           <Video className="cta-button__icon cta-button__icon--cyan" />
           <span>Video Chat</span>
-        </button>
-        <button className="cta-button cta-button--tertiary glass-card glow-hover">
+        </Button>
+        <Button variant='ghost' size='lg' className="cta-button cta-button--tertiary glass-card glow-hover">
           <Mic className="cta-button__icon cta-button__icon--cyan" />
           <span>Audio Chat</span>
-        </button>
-        <button className="cta-button cta-button--tertiary glass-card glow-hover">
-          <MessageSquare className="cta-button__icon cta-button__icon--cyan" />
-          <span>Text Chat</span>
-        </button>
+        </Button>
+        <Link href='/text' className='cta-link'>
+          <Button variant='ghost' size='lg' className="cta-button cta-button--tertiary glass-card glow-hover">
+            <MessageSquare className="cta-button__icon cta-button__icon--cyan" />
+            <span>Text Chat</span>
+          </Button>
+        </Link>        
       </div>
     </section>
   )
