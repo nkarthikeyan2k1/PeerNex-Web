@@ -1,0 +1,84 @@
+// Basic layout mixins (styles/_mixins.scss)
+
+// --------------------------------------------------
+// Center content horizontally and vertically using flexbox
+// --------------------------------------------------
+@mixin center-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// --------------------------------------------------
+// Flex column with optional gap and alignment
+// --------------------------------------------------
+@mixin flex-col($gap: 0, $align: stretch, $justify: flex-start) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+// --------------------------------------------------
+// Flex row with optional gap and alignment
+// --------------------------------------------------
+@mixin flex-row($gap: 0, $align: stretch, $justify: flex-start) {
+  display: flex;
+  flex-direction: row;
+  gap: $gap;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+// --------------------------------------------------
+// Full‑screen container (100% width & height)
+// --------------------------------------------------
+@mixin full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+// --------------------------------------------------
+// Simple glass‑morphism effect (blur + translucent bg)
+// --------------------------------------------------
+@mixin glass($bg: var(--glass-bg), $blur: 8px) {
+  background: $bg;
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+}
+
+// --------------------------------------------------
+// Text ellipsis for single‑line overflow
+// --------------------------------------------------
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// --------------------------------------------------
+// Gradient background (horizontal) using CSS vars
+// --------------------------------------------------
+@mixin bg-gradient-horizontal($start: var(--primary), $end: var(--secondary)) {
+  background: linear-gradient(to right, $start, $end);
+}
+
+// --------------------------------------------------
+// Button base style (can be extended)
+// --------------------------------------------------
+@mixin button-base {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  &:hover {
+    background: var(--primary);
+    color: var(--text-on-primary);
+  }
+  &:active {
+    transform: scale(0.95);
+  }
+}
