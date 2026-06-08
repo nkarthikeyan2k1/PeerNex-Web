@@ -1,0 +1,73 @@
+// TerminalRow — IRC-style row: [WHO] › message text          HH:MM
+// Variants: --you (muted zinc), --stranger (red), --system (zinc italic)
+// Both you and stranger are left-aligned — no right-side bubbles.
+
+.terminal-row {
+  display: grid;
+  // gutter (label) | text (grow) | time (fixed)
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0 10px;
+  padding: 3px 4px;
+  border-radius: 4px;
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--c-hover);
+  }
+
+  // ─── Gutter: dot + label + colon ─────────────────────────────────────────
+  &__gutter {
+    @include flex-row(5px, center);
+    flex-shrink: 0;
+  }
+
+  &__sys-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 99px;
+    flex-shrink: 0;
+  }
+
+  &__who {
+    font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    // colour applied per variant below
+  }
+
+  &__sep {
+    font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+    font-size: 12px;
+    color: var(--c-tx3);
+    line-height: 1;
+  }
+
+  // ─── Message text ─────────────────────────────────────────────────────────
+  &__text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--c-tx);
+    word-break: break-word;
+  }
+
+  // ─── Timestamp ────────────────────────────────────────────────────────────
+  &__time {
+    font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+    font-size: 10.5px;
+    color: var(--c-tx3);
+    white-space: nowrap;
+    align-self: flex-start;
+    padding-top: 3px;
+  }
+
+  // ─── Variant colours ──────────────────────────────────────────────────────
+  // YOU is deliberately muted so STRANGER (red) stands out as the "other" voice
+  &--you .terminal-row__who      { color: var(--c-tx2); }
+  &--stranger .terminal-row__who { color: var(--c-stranger); }
+  &--system {
+    .terminal-row__who  { color: var(--c-tx3); letter-spacing: 0.05em; }
+    .terminal-row__text { color: var(--c-tx2); font-size: 12.5px; font-style: italic; }
+  }
+}

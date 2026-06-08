@@ -1,0 +1,191 @@
+// VideoTile — video participant tile, always rendered on a dark surface
+// States: --live (video streaming), --waiting (no peer yet), --cam-off (peer muted cam)
+// Variants: --you, --stranger, --pip (small picture-in-picture)
+//
+// Video context is always dark, so this component has its own dark palette
+// and does NOT use --c-* tokens (those are light/dark theme-aware).
+
+// ─── Private colour palette (dark-only, video context) ───────────────────────
+$vt-bg:         #0a0a0f;
+$vt-overlay:    rgba(0, 0, 0, 0.72);
+$vt-glass:      rgba(0, 0, 0, 0.55);
+$vt-border:     rgba(255, 255, 255, 0.08);
+$vt-text:       rgba(255, 255, 255, 0.92);
+$vt-text-muted: rgba(255, 255, 255, 0.50);
+$vt-avatar-bg:  rgba(255, 255, 255, 0.07);
+$vt-avatar-bd:  rgba(255, 255, 255, 0.12);
+$vt-live-red:   #dc2626;
+$vt-dot-live:   #22c55e;    // green-500
+$vt-dot-wait:   #f59e0b;    // amber-400
+$vt-dot-off:    #71717a;    // zinc-500
+
+.video-tile {
+  position: relative;
+  overflow: hidden;
+  background: $vt-bg;
+  border-radius: 16px;
+  border: 1px solid $vt-border;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+
+  // Connected (live) state gets gradient bg to feel "live"
+  &--live {
+    background: radial-gradient(120% 90% at 50% 0%, #15151b 0%, #0a0a0d 70%);
+  }
+
+  // ─── Letter avatar (connected, no real stream yet) ───────────────────────
+  &__letter-wrap {
+    position: absolute;
+    inset: 0;
+    @include center-flex;
+  }
+
+  &__letter-circle {
+    @include center-flex;
+    width: 120px;
+    height: 120px;
+    border-radius: 99px;
+    background: linear-gradient(145deg, #1e1e24, #131318);
+    border: 1px solid $vt-border;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: $vt-text;
+    flex-shrink: 0;
+
+    &--pip {
+      width: 64px;
+      height: 64px;
+      font-size: 22px;
+    }
+  }
+
+  // ─── PiP variant ────────────────────────────────────────────────────────
+  &--pip {
+    width: 200px;
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    border-width: 2px;
+    flex-shrink: 0;
+  }
+
+  // ─── Video element ───────────────────────────────────────────────────────
+  &__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  // ─── Overlay (waiting / cam-off) ─────────────────────────────────────────
+  &__overlay {
+    @include flex-col(14px, center, center);
+    position: absolute;
+    inset: 0;
+    background: $vt-overlay;
+    padding: 24px;
+  }
+
+  // Circular avatar box
+  &__avatar {
+    @include center-flex;
+    width: 72px;
+    height: 72px;
+    border-radius: 99px;
+    background: $vt-avatar-bg;
+    border: 1px solid $vt-avatar-bd;
+    color: $vt-text-muted;
+    flex-shrink: 0;
+  }
+
+  &__spinner {
+    animation: vt-spin 1.4s linear infinite;
+  }
+
+  &__overlay-text {
+    @include flex-row(6px, center, center);
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: $vt-text-muted;
+    text-align: center;
+  }
+
+  // ─── LIVE badge ───────────────────────────────────────────────────────────
+  &__live-badge {
+    @include flex-row(6px, center);
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: $vt-live-red;
+    pointer-events: none;
+  }
+
+  &__live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 99px;
+    background: #fff;
+    animation: vt-live-pulse 1.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  &__live-text {
+    font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    color: #fff;
+  }
+
+  // ─── Name chip ────────────────────────────────────────────────────────────
+  &__name-chip {
+    @include flex-row(7px, center);
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: $vt-glass;
+    border: 1px solid $vt-border;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+
+  &__name-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    flex-shrink: 0;
+
+    &--live    { background: $vt-dot-live; box-shadow: 0 0 6px $vt-dot-live; }
+    &--waiting { background: $vt-dot-wait; animation: vt-wait-pulse 1.6s ease-in-out infinite; }
+    &--cam-off { background: $vt-dot-off; }
+  }
+
+  &__name-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: $vt-text;
+    white-space: nowrap;
+  }
+}
+
+// ─── Keyframes ────────────────────────────────────────────────────────────────
+@keyframes vt-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes vt-live-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+@keyframes vt-wait-pulse {
+  0%, 100% { opacity: 1;    transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}

@@ -1,0 +1,80 @@
+// BubbleRow — rounded chat bubble, left (stranger) or right (you) aligned
+// You:      accent-soft bg + accent border, right-aligned, bottom-right corner sharp
+// Stranger: card bg + border, left-aligned, bottom-left corner sharp
+
+.bubble-row {
+  @include flex-col(5px);
+  max-width: 68%;
+  animation: br-in 0.18s ease both;
+
+  // ─── Meta row: author label + timestamp ────────────────────────────────────
+  &__meta {
+    @include flex-row(8px, center);
+    padding: 0 4px;
+  }
+
+  &__author {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-tx3);
+  }
+
+  &__time {
+    font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+    font-size: 10.5px;
+    color: var(--c-tx3);
+  }
+
+  // ─── Bubble ────────────────────────────────────────────────────────────────
+  &__bubble {
+    margin: 0;
+    padding: 11px 15px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    word-break: break-word;
+  }
+
+  // ─── You — right-aligned, accent tint ──────────────────────────────────────
+  &--you {
+    align-self: flex-end;
+    align-items: flex-end;
+
+    .bubble-row__author { color: var(--c-you); }
+
+    .bubble-row__bubble {
+      background: var(--c-accent-soft);
+      border: 1px solid var(--c-accent-line);
+      color: var(--c-tx);
+      border-bottom-right-radius: 4px;
+    }
+  }
+
+  // ─── Stranger — left-aligned, card bg ──────────────────────────────────────
+  &--stranger {
+    align-self: flex-start;
+    align-items: flex-start;
+
+    .bubble-row__author { color: var(--c-stranger); }
+
+    .bubble-row__bubble {
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      color: var(--c-tx);
+      border-bottom-left-radius: 4px;
+    }
+  }
+}
+
+@keyframes br-in {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

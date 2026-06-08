@@ -1,0 +1,45 @@
+// TypingIndicator — three staggered bouncing dots + "Stranger is typing" label
+
+.typing-indicator {
+  @include flex-row(10px, center);
+  padding: 6px 12px;
+  align-self: flex-start;
+
+  &__dots {
+    @include flex-row(5px, center);
+  }
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    background: var(--c-tx3);
+    flex-shrink: 0;
+    animation: ti-bounce 1.2s ease-in-out infinite;
+
+    // Stagger each dot
+    &:nth-child(1) { animation-delay: 0s; }
+    &:nth-child(2) { animation-delay: 0.18s; }
+    &:nth-child(3) { animation-delay: 0.36s; }
+  }
+
+  &__label {
+    font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--c-tx3);
+    white-space: nowrap;
+  }
+}
+
+@keyframes ti-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}

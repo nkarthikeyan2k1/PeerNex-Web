@@ -1,97 +1,105 @@
+// ─── Chat design tokens ─────────────────────────────────────────────────────
+// All chat components consume --c-* variables. Only this block owns them.
+// Light values use existing system tokens where possible; dark values match
+// the obsidian dark design (pure black bg, zinc borders, cyan accent).
+
+:root {
+  --c-chrome:       #ffffff;
+  --c-surface:      #f4f4f5;          // zinc-100  — input wells, toggle bg
+  --c-card:         #e4e4e7;          // zinc-200  — bubble cards
+  --c-hover:        #d4d4d8;          // zinc-300  — hover states
+  --c-border:       #e4e4e7;          // zinc-200
+  --c-border-soft:  rgba(0, 0, 0, 0.06);
+
+  --c-tx:           #18181b;          // zinc-900
+  --c-tx2:          #52525b;          // zinc-600
+  --c-tx3:          #a1a1aa;          // zinc-400
+
+  // You / Stranger / Status
+  --c-you:          #0284c7;          // sky-600
+  --c-stranger:     #dc2626;          // red-600
+  --c-ok:           #059669;          // emerald-600
+
+  // Accent — reuses the existing --tertiary token so it stays in sync
+  --c-accent:       var(--tertiary);
+  --c-accent-ink:   #003640;          // dark teal for contrast on light accent
+  --c-accent-soft:  rgba(0, 180, 188, 0.10);
+  --c-accent-line:  rgba(0, 180, 188, 0.40);
+}
+
+.dark {
+  --c-chrome:       #09090b;
+  --c-surface:      #0c0c0f;
+  --c-card:         #121215;
+  --c-hover:        #18181b;
+  --c-border:       #27272a;
+  --c-border-soft:  rgba(39, 39, 42, 0.55);
+
+  --c-tx:           #fafafa;
+  --c-tx2:          #a1a1aa;
+  --c-tx3:          #71717a;
+
+  --c-you:          #7dd3fc;          // sky-300
+  --c-stranger:     #f87171;          // red-400
+  --c-ok:           #34d399;          // emerald-400
+
+  --c-accent:       #00dce5;
+  --c-accent-ink:   #04181a;
+  --c-accent-soft:  rgba(0, 220, 229, 0.12);
+  --c-accent-line:  rgba(0, 220, 229, 0.45);
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+
 .chat-screen {
-  flex-grow: 1;
   display: flex;
-  width: 100vw;
-  height: 95vh;
-  padding: 10px;
-  gap: 10px;
-  background: var(--bg-color);
-  background-image: radial-gradient(circle at top right, rgba(var(--primary-rgb), 0.15), transparent 40%),
-                    radial-gradient(circle at bottom left, rgba(var(--tertiary-rgb), 0.05), transparent 30%);
-  overscroll-behavior-y: none;
-  overflow-y: hidden;
+  flex-direction: column;
+  height: calc(100dvh - 62px);
+  padding: 12px 16px 16px;
+  gap: 12px;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  background-image:
+    radial-gradient(circle at 80% 5%, rgba(var(--primary-rgb), 0.1), transparent 40%),
+    radial-gradient(circle at 5% 95%, rgba(var(--tertiary-rgb), 0.06), transparent 35%);
 
-  &__container {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
- 
-  
-  .outlined {
-    border: 0.2vh solid #ddd !important;
-    box-shadow: 0 .2vh .5vh rgba(0, 0, 0, .08) !important;
+  // Video mode — remove padding/gap so VideoStage owns its own layout
+  &--video {
+    padding: 0;
+    gap: 0;
   }
 
-  &__chat-window {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    border-top-right-radius: 8px;
-    padding: 18px;
-    gap: 5px;
-    // position: relative;
-    border-radius: 10px;
+  // Empty chat placeholder in video side panel before connection
+  &__video-empty {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--c-tx3);
+    line-height: 1.55;
   }
 
-  &__text-window {
-    width: 100%;
-    display: flex;
-    height: 125px;
-    gap: 8px;
-  }
+  &__messages {
+    flex: 1;
+    overflow-y: auto;
+    @include flex-col(10px);
+    padding: 20px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    @include glass();
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--primary-rgb), 0.25) transparent;
 
-  &__input-container {
-    flex-grow: 1;
-    z-index: 10;
-    padding: 1px;
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  &__message-input {
-    // width: 100%;
-    // background: #09090b; /* bg-background */
-    // border: 1px solid #27272a; /* border-outline-variant */
-    // border-radius: 1rem;
-    // padding: 1rem 1.5rem; /* px-6 py-4 (md:py-5) */
-    // color: #e4e1e6;   /* text-on-surface */
-    // resize: none;
-    // outline: none;
-    // transition: border 0.2s;
-    flex-grow: 1;
-    resize: none;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 1em;
-    outline: 0;
-    width: 0;
-    padding: 5px;
-    border: 0;
-    &:focus {
-      border-color: #a78bfa; /* focus:border-primary */
-      box-shadow: 0 0 0 1px #a78bfa; /* focus:ring-primary */
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(var(--primary-rgb), 0.25);
+      border-radius: 2px;
     }
   }
-  &__send-button {
-    // position: absolute;
-    // right: 1rem;
-    // background: transparent;
-    // padding: 0.5rem;
-    // color: #a78bfa;   /* text-primary */
-    // transition: color 0.2s;
-    // &:hover { color: #c4b5fd; }   /* hover:text-primary-fixed-dim */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      background: 0 0;
-      color: #9ca3af;
-      margin-right: 4px;
-      cursor: pointer;
-      transition: transform 50ms ease, color 50ms ease;
-  }
+
 }
+

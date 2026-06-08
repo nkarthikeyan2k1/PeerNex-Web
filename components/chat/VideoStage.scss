@@ -1,0 +1,163 @@
+// VideoStage — two-column video chat layout
+//
+// ┌─────────────────────────────────┬──────────────────────────────────┐
+// │       video column (flex:1)     │      side chat panel (340px)     │
+// │  ┌───────────────────────────┐  │  [💬 Live chat ──────────────]   │
+// │  │  stranger tile            │  │                                   │
+// │  │              ┌──────────┐ │  │  ChatLog (flex:1)                │
+// │  │              │ PiP (you)│ │  │                                   │
+// │  └───────────── └──────────┘ │  │  Composer (footer)               │
+// │  [ 🎤 ][ 📷 ][ Next ][ × ]   │  │                                   │
+// └─────────────────────────────────┴──────────────────────────────────┘
+//
+// Video context is always dark — this component manages its own dark surface.
+
+.video-stage {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+
+  // ─── Video column ──────────────────────────────────────────────────────────
+  &__col {
+    flex: 1;
+    min-width: 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #000;
+  }
+
+  // Tile area: fills remaining height, relative-positioned for PiP overlay
+  &__tile-area {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    border-radius: 14px;
+    overflow: hidden;
+
+    // VideoTile fills the tile area
+    .video-tile {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: unset;  // override — height is driven by parent flex
+      border-radius: 14px;
+    }
+  }
+
+  // PiP — your tile, absolute bottom-right corner of the tile area
+  &__pip {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    width: 168px;
+    height: 112px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+
+    .video-tile {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: unset;
+      border-radius: 12px;
+    }
+  }
+
+  // Idle box — shown when not connected, wraps ConnectState
+  &__idle-box {
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--c-border);
+    background: #09090b;
+    display: flex;
+  }
+
+  // ─── Side chat panel ───────────────────────────────────────────────────────
+  &__chat {
+    width: 340px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--c-border);
+    display: flex;
+    flex-direction: column;
+    background: var(--c-chrome);
+    min-height: 0;
+  }
+
+  &__chat-header {
+    height: 44px;
+    flex-shrink: 0;
+    @include flex-row(8px, center);
+    padding: 0 16px;
+    border-bottom: 1px solid var(--c-border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-tx2);
+  }
+}
+
+// ─── Control bar ───────────────────────────────────────────────────────────────
+
+.vs-controls {
+  @include flex-row(10px, center, center);
+  flex-shrink: 0;
+
+  &__btn {
+    height: 46px;
+    min-width: 46px;
+    border-radius: 11px;
+    @include flex-row(8px, center, center);
+    border: 1px solid var(--c-border);
+    background: var(--c-card);
+    color: var(--c-tx2);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s;
+
+    &:hover:not(:disabled) {
+      background: var(--c-hover);
+      color: var(--c-tx);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    // Mic/cam toggled OFF — red tint
+    &--off {
+      border-color: rgba(248, 113, 113, 0.45);
+      background: rgba(248, 113, 113, 0.12);
+      color: var(--c-stranger);
+
+      &:hover:not(:disabled) {
+        background: rgba(248, 113, 113, 0.20);
+      }
+    }
+
+    // Next — wider, with text label
+    &--next {
+      padding: 0 18px;
+      color: var(--c-tx);
+
+      &:hover:not(:disabled) {
+        color: var(--c-tx);
+      }
+    }
+
+    // End — red tint, icon only
+    &--end {
+      border-color: rgba(248, 113, 113, 0.40);
+      background: rgba(248, 113, 113, 0.10);
+      color: var(--c-stranger);
+
+      &:hover:not(:disabled) {
+        background: rgba(248, 113, 113, 0.18);
+      }
+    }
+  }
+}

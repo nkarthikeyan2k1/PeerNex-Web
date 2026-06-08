@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp /tmp/design.bin /tmp/design.gz)",
+      "Bash(gunzip /tmp/design.gz)",
+      "Bash(xxd /tmp/design)",
+      "Bash(mkdir -p /tmp/design-extracted)",
+      "Bash(tar -xf /tmp/design -C /tmp/design-extracted)",
+      "Bash(npx tsc *)",
+      "Bash(curl -s \"https://api.anthropic.com/v1/design/h/CdUjUFbmeFTM5rspQuT5EQ?open_file=index.html\")",
+      "Bash(cp /tmp/design2.gz /tmp/design2_copy.gz)",
+      "Bash(gunzip /tmp/design2_copy.gz)",
+      "Bash(mkdir -p /tmp/design2-extracted)",
+      "Bash(tar -xf /tmp/design2_copy -C /tmp/design2-extracted)",
+      "Bash(lsof -ti:3000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(node -e ' *)",
+      "Bash(npm run *)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/text)",
+      "mcp__playwright"
+    ]
+  }
+}

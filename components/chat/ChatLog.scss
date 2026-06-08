@@ -1,0 +1,41 @@
+// ChatLog — flex-1 scrollable message area
+// Two layout variants: --bubbles (bubble alignment) and --terminal (dense rows)
+
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 8px;
+  border-radius: 16px;
+  border: 1px solid var(--c-border-soft);
+  background: var(--c-surface);
+
+  // Custom thin scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-accent-line) transparent;
+
+  &::-webkit-scrollbar        { width: 3px; }
+  &::-webkit-scrollbar-track  { background: transparent; }
+  &::-webkit-scrollbar-thumb  {
+    background: var(--c-accent-line);
+    border-radius: 99px;
+  }
+
+  // ─── Bubbles variant ────────────────────────────────────────────────────────
+  &--bubbles {
+    gap: 6px;
+  }
+
+  // ─── Terminal variant ───────────────────────────────────────────────────────
+  // Tighter rows, monospace feel, subtle left border accent
+  &--terminal {
+    gap: 2px;
+    padding: 12px 16px 8px;
+    font-variant-numeric: tabular-nums;
+    border-left: 2px solid var(--c-accent-line);
+    border-radius: 0 16px 16px 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}

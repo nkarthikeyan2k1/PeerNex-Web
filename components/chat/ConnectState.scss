@@ -1,0 +1,127 @@
+// ConnectState — full-area overlay shown when state is 'idle' or 'searching'
+// Shared layout for both variants; variant modifiers adjust individual pieces.
+
+.connect-state {
+  flex: 1;
+  @include flex-col(14px, center, center);
+  padding: 24px;
+  text-align: center;
+
+  // ─── Shared typography ──────────────────────────────────────────────────
+  &__heading {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--c-tx);
+  }
+
+  &__body {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--c-tx2);
+    max-width: 360px;
+  }
+
+  // ─── Idle — icon box ────────────────────────────────────────────────────
+  &__icon-box {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    @include center-flex;
+    background: var(--c-accent-soft);
+    border: 1px solid var(--c-accent-line);
+    color: var(--c-accent);
+    margin-bottom: 4px;
+  }
+
+  // ─── Idle — CTA button ──────────────────────────────────────────────────
+  &__cta {
+    @include flex-row(9px, center, center);
+    margin-top: 6px;
+    padding: 13px 28px;
+    border-radius: 11px;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    background: var(--c-accent);
+    color: var(--c-accent-ink);
+    box-shadow: 0 0 0 1px var(--c-accent-line), 0 8px 30px var(--c-accent-soft);
+    transition: opacity 0.15s, transform 0.1s;
+
+    &:hover  { opacity: 0.88; }
+    &:active { transform: scale(0.97); }
+
+    kbd {
+      font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+      font-size: 10px;
+      font-weight: 600;
+      opacity: 0.65;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      padding: 2px 5px;
+      margin-left: 2px;
+    }
+  }
+
+  // ─── Searching — ring spinner ────────────────────────────────────────────
+  &__ring-wrap {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    @include center-flex;
+    margin-bottom: 4px;
+  }
+
+  // Static border circle (track)
+  &__ring-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 99px;
+    border: 2px solid var(--c-border);
+  }
+
+  // Animated spinner arc
+  &__ring-spinner {
+    position: absolute;
+    inset: 0;
+    border-radius: 99px;
+    border: 2px solid transparent;
+    border-top-color: var(--c-accent);
+    animation: cs-spin 1s linear infinite;
+  }
+
+  // Pulsing inner circle with icon
+  &__ring-core {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 99px;
+    @include center-flex;
+    background: var(--c-accent-soft);
+    color: var(--c-accent);
+    animation: cs-ring-pulse 1.8s ease-out infinite;
+  }
+
+  // Variant modifiers
+  &--idle    { justify-content: center; }
+  &--searching {
+    .connect-state__heading { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+    .connect-state__body    { font-size: 13px; }
+  }
+}
+
+// ─── Keyframes ─────────────────────────────────────────────────────────────
+@keyframes cs-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cs-ring-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--c-accent-soft); }
+  70%  { box-shadow: 0 0 0 14px rgba(0, 220, 229, 0); }
+  100% { box-shadow: 0 0 0 0  rgba(0, 220, 229, 0); }
+}

@@ -1,0 +1,158 @@
+// Composer — footer bar
+//
+// idle / searching:  [────────────── input well (disabled) ──────────────]
+// connected:         [Next ESC] [──── input well ─── 😊 🏷 [↑]] [End ×]
+
+.composer {
+  @include flex-row(10px, flex-end);
+  flex-shrink: 0;
+  padding-bottom: 2px;
+
+  // ─── Action buttons (Next / End) ──────────────────────────────────────────
+  &__action {
+    @include flex-col(4px, center, center);
+    flex-shrink: 0;
+    width: 72px;
+    align-self: stretch;
+    border-radius: 13px;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+
+    &:active { transform: scale(0.96); }
+
+    &--next {
+      background: var(--c-card);
+      color: var(--c-tx);
+      border: 1px solid var(--c-border);
+
+      &:hover { background: var(--c-hover); }
+    }
+
+    &--end {
+      background: rgba(var(--error-rgb), 0.10);
+      color: var(--error);
+      border: 1px solid rgba(var(--error-rgb), 0.20);
+      &:hover { background: rgba(var(--error-rgb), 0.17); }
+    }
+  }
+
+  &__action-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  &__action-kbd {
+    font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+    font-size: 9.5px;
+    font-weight: 600;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: var(--c-hover);
+    border: 1px solid var(--c-border);
+    color: var(--c-tx3);
+    opacity: 0.90;
+  }
+
+  // ─── Input well ────────────────────────────────────────────────────────────
+  &__well {
+    flex: 1;
+    @include flex-row(0, flex-end);
+    padding: 10px 10px 10px 16px;
+    gap: 6px;
+    border-radius: 14px;
+    border: 1px solid var(--c-border);
+    background: var(--c-surface);
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus-within {
+      border-color: var(--c-accent-line);
+      box-shadow: 0 0 0 3px var(--c-accent-soft);
+    }
+
+    &--disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--c-tx);
+    padding: 0;
+    min-height: 44px;
+    max-height: 120px;
+    overflow-y: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+
+    &::placeholder {
+      color: var(--c-tx3);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: var(--c-tx3);
+    }
+  }
+
+  // ─── Well right-side button group ─────────────────────────────────────────
+  &__well-actions {
+    @include flex-row(4px, center);
+    flex-shrink: 0;
+    padding-bottom: 2px;
+  }
+
+  // Ghost icon buttons (emoji / tag)
+  &__ghost-btn {
+    @include center-flex;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--c-tx3);
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover:not(:disabled) {
+      color: var(--c-tx2);
+      background: var(--c-hover);
+    }
+
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
+  }
+
+  // Send button
+  &__send-btn {
+    @include center-flex;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    border: none;
+    background: var(--c-accent);
+    color: var(--c-accent-ink);
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+
+    &:hover:not(:disabled) { opacity: 0.88; }
+    &:active:not(:disabled) { transform: scale(0.93); }
+
+    &:disabled {
+      background: var(--c-hover);
+      color: var(--c-tx3);
+      cursor: not-allowed;
+    }
+  }
+}
