@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { Mic, MicOff, Video, VideoOff, SkipForward, X, MessageSquare } from 'lucide-react';
 import VideoTile from './VideoTile';
 import ConnectState from './ConnectState';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import type { ChatState } from './types';
 import './VideoStage.scss';
 
@@ -17,6 +19,9 @@ export interface VideoStageProps {
   onStart: () => void;
   /** Side chat panel: ChatLog + Composer passed from ChatScreen */
   children: React.ReactNode;
+  localStream?: MediaStream | null;
+  remoteStream?: MediaStream | null;
+  mediaError?: string | null;
 }
 
 // ─── Control bar ─────────────────────────────────────────────────────────────
@@ -103,9 +108,126 @@ export default function VideoStage({
   onStop,
   onStart,
   children,
+  localStream,
+  remoteStream,
+  mediaError,
 }: VideoStageProps) {
   const connected = chatState === 'connected';
+  const isMobile = useIsMobile();
+  const [chatOpen, setChatOpen] = useState(false);
 
+  const youState = mediaError
+    ? 'blocked'
+    : camOff
+      ? 'cam-off'
+      : localStream
+        ? 'live'
+        : 'waiting';
+
+  // ── Mobile: immersive full-bleed video + slide-up chat sheet ────────────────
+  if (isMobile) {
+    return (
+      <div className="video-stage video-stage--mobile">
+        {connected ? (
+          <>
+            <VideoTile
+              who="stranger"
+              label="Stranger"
+              state={remoteStream ? 'live' : 'waiting'}
+              stream={remoteStream}
+            />
+            <div className="video-stage__pip video-stage__pip--mobile">
+              <VideoTile
+                who="you"
+                label="You"
+                state={youState}
+                muted
+                pip
+                stream={localStream}
+                errorMessage={mediaError ?? undefined}
+              />
+            </div>
+
+            {/* Floating glass control bar */}
+            <div className="vs-float">
+              <button
+                className={`vs-float__btn${micOff ? ' vs-float__btn--off' : ''}`}
+                onClick={onMicToggle}
+                aria-label={micOff ? 'Unmute mic' : 'Mute mic'}
+                title="Mic"
+              >
+                {micOff ? <MicOff size={18} strokeWidth={1.75} /> : <Mic size={18} strokeWidth={1.75} />}
+              </button>
+              <button
+                className={`vs-float__btn${camOff ? ' vs-float__btn--off' : ''}`}
+                onClick={onCamToggle}
+                aria-label={camOff ? 'Turn camera on' : 'Turn camera off'}
+                title="Camera"
+              >
+                {camOff ? <VideoOff size={18} strokeWidth={1.75} /> : <Video size={18} strokeWidth={1.75} />}
+              </button>
+              <button
+                className="vs-float__btn"
+                onClick={() => setChatOpen(true)}
+                aria-label="Open chat"
+                title="Chat"
+              >
+                <MessageSquare size={18} strokeWidth={1.75} />
+              </button>
+              <button
+                className="vs-float__btn vs-float__btn--next"
+                onClick={onNext}
+                aria-label="Next peer"
+                title="Next"
+              >
+                <SkipForward size={18} strokeWidth={2} />
+              </button>
+              <button
+                className="vs-float__btn vs-float__btn--end"
+                onClick={onStop}
+                aria-label="End session"
+                title="End"
+              >
+                <X size={18} strokeWidth={2.5} />
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="video-stage__idle-box video-stage__idle-box--mobile">
+            <ConnectState state={chatState} onStart={onStart} onCancel={onStop} />
+          </div>
+        )}
+
+        {/* Chat bottom sheet */}
+        {connected && (
+          <>
+            <div
+              className={`vs-sheet-scrim${chatOpen ? ' vs-sheet-scrim--open' : ''}`}
+              onClick={() => setChatOpen(false)}
+              aria-hidden
+            />
+            <div className={`vs-sheet${chatOpen ? ' vs-sheet--open' : ''}`} role="dialog" aria-label="Live chat">
+              <div className="vs-sheet__header">
+                <span className="vs-sheet__title">
+                  <MessageSquare size={15} strokeWidth={2} aria-hidden /> Live chat
+                </span>
+                <button
+                  className="vs-sheet__close"
+                  onClick={() => setChatOpen(false)}
+                  aria-label="Close chat"
+                >
+                  <X size={16} strokeWidth={2} />
+                </button>
+              </div>
+              {children}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // ── Desktop / tablet: video column + side chat panel ────────────────────────
   return (
     <div className="video-stage">
 
@@ -117,22 +239,28 @@ export default function VideoStage({
           {connected ? (
             <>
               {/* Stranger full tile */}
-              <VideoTile who="stranger" label="Stranger" state="live" />
-              {/* Your PiP — bottom-right */}
+              <VideoTile
+                who="stranger"
+                label="Stranger"
+                state={remoteStream ? 'live' : 'waiting'}
+                stream={remoteStream}
+              />
               <div className="video-stage__pip">
                 <VideoTile
                   who="you"
                   label="You"
-                  state={camOff ? 'cam-off' : 'live'}
+                  state={mediaError ? 'blocked' : camOff ? 'cam-off' : localStream ? 'live' : 'waiting'}
                   muted
                   pip
+                  stream={localStream}
+                  errorMessage={mediaError ?? undefined}
                 />
               </div>
             </>
           ) : (
             /* Not connected: ConnectState overlay inside a dark bordered box */
             <div className="video-stage__idle-box">
-              <ConnectState state={chatState} onStart={onStart} />
+              <ConnectState state={chatState} onStart={onStart} onCancel={onStop} />
             </div>
           )}
         </div>

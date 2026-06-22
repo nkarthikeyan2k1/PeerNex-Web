@@ -1,9 +1,9 @@
-import React from 'react'
+'use client'
 
-const page = () => {
-  return (
-    <div>page</div>
-  )
+import ChatScreen from '@/components/chat/ChatScreen';
+
+const Page = () => {
+  return <ChatScreen initialMode="video" />;
 }
 
-export default page
+export default Page;

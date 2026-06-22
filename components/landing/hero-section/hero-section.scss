@@ -28,26 +28,40 @@
 .text-gradient {
   background: linear-gradient(to right, $primary, $secondary);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
 }
 
 .cta-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   width: 100%;
-  max-width: 56rem;
-  
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
+  max-width: 27.5rem;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.5rem;
+    width: auto;
+    max-width: none;
   }
 }
 
 .cta-link{
   text-decoration: none;
+  display: flex;
+  flex: 1 1 auto;
+
+  @media (min-width: 640px) {
+    flex: 0 0 auto;
+  }
 }
 .cta-button {
-  height: 5rem;
+  width: 100%;
+  min-width: 12.5rem;
+  height: 4.25rem;
+  padding: 0 2.375rem;
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -56,12 +70,18 @@
   cursor: pointer;
   border: none;
   font-family: inherit;
-  font-size: 1.25rem;
-  font-weight: 600;
-  transition: transform 0.1s;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  transition: transform 0.16s, background-color 0.16s, border-color 0.16s, box-shadow 0.16s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
 
   &--primary {

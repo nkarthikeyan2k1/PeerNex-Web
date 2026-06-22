@@ -6,21 +6,14 @@ import type { VideoTileState } from './types';
 import './VideoTile.scss';
 
 export interface VideoTileProps {
-  /** Which participant this tile represents */
   who: 'you' | 'stranger';
-  /** Display name shown in the name chip */
   label: string;
-  /** Visual state — drives which overlay is shown */
   state: VideoTileState;
-  /** Live MediaStream — when provided and state === 'live', shown in <video> */
   stream?: MediaStream | null;
-  /** Mute the audio track — always true for the "you" tile to avoid feedback */
   muted?: boolean;
-  /** Render as a small picture-in-picture tile */
   pip?: boolean;
+  errorMessage?: string;
 }
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function LiveBadge() {
   return (
@@ -31,19 +24,10 @@ function LiveBadge() {
   );
 }
 
-function NameChip({
-  label,
-  state,
-}: {
-  label: string;
-  state: VideoTileState;
-}) {
+function NameChip({ label, state }: { label: string; state: VideoTileState }) {
   return (
     <div className="video-tile__name-chip">
-      <span
-        className={`video-tile__name-dot video-tile__name-dot--${state}`}
-        aria-hidden
-      />
+      <span className={`video-tile__name-dot video-tile__name-dot--${state}`} aria-hidden />
       <span className="video-tile__name-label">{label}</span>
     </div>
   );
@@ -74,6 +58,17 @@ function CamOffOverlay({ label }: { label: string }) {
   );
 }
 
+function BlockedOverlay({ message }: { message: string }) {
+  return (
+    <div className="video-tile__overlay">
+      <div className="video-tile__avatar">
+        <VideoOff size={28} strokeWidth={1.5} aria-hidden />
+      </div>
+      <p className="video-tile__overlay-text">{message}</p>
+    </div>
+  );
+}
+
 function LetterAvatar({ label, pip }: { label: string; pip: boolean }) {
   return (
     <div className="video-tile__letter-wrap">
@@ -84,8 +79,6 @@ function LetterAvatar({ label, pip }: { label: string; pip: boolean }) {
   );
 }
 
-// ─── Public component ─────────────────────────────────────────────────────────
-
 export default function VideoTile({
   who,
   label,
@@ -93,20 +86,21 @@ export default function VideoTile({
   stream,
   muted = false,
   pip = false,
+  errorMessage,
 }: VideoTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Attach MediaStream to the video element whenever it changes
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
     el.srcObject = stream ?? null;
   }, [stream]);
 
-  const showVideo      = state === 'live' && !!stream;
-  const showLetterAv   = state === 'live' && !stream;
-  const showWaiting    = state === 'waiting';
-  const showCamOff     = state === 'cam-off';
+  const showVideo    = state === 'live' && !!stream;
+  const showLetterAv = state === 'live' && !stream;
+  const showWaiting  = state === 'waiting';
+  const showCamOff   = state === 'cam-off';
+  const showBlocked  = state === 'blocked';
 
   return (
     <div
@@ -121,7 +115,7 @@ export default function VideoTile({
       role="figure"
       aria-label={`${label} video`}
     >
-      {/* Video element — always in DOM so srcObject assignment is stable */}
+      {/* Always in DOM so srcObject assignment is stable */}
       <video
         ref={videoRef}
         className="video-tile__video"
@@ -132,12 +126,11 @@ export default function VideoTile({
         style={{ display: showVideo ? 'block' : 'none' }}
       />
 
-      {/* State overlays */}
       {showLetterAv && <LetterAvatar label={label} pip={pip} />}
+      {showBlocked  && <BlockedOverlay message={errorMessage ?? 'Camera access blocked.'} />}
       {showWaiting  && <WaitingOverlay />}
       {showCamOff   && <CamOffOverlay label={label} />}
 
-      {/* Persistent badges — shown on top of video or overlays */}
       {state === 'live' && <LiveBadge />}
       <NameChip label={label} state={state} />
     </div>

@@ -24,8 +24,9 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         if (typeof window === "undefined") return;
 
         // Initialize the socket once on client side
-        const socketInstance = io("http://localhost:3001", {
-            transports: ["websocket", "polling"],
+        // No explicit URL — connects to current page origin, proxied by Next.js to the backend
+        const socketInstance = io(process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL, {
+            transports: ["polling", "websocket"],
             autoConnect: false, // Connect manually in useEffect
         });
         socketRef.current = socketInstance;

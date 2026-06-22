@@ -54,11 +54,11 @@
 .chat-screen {
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - 62px);
+  height: 100dvh;
   padding: 12px 16px 16px;
   gap: 12px;
   overflow: hidden;
-  background-color: var(--bg-color);
+  // background-color: var(--bg-color);
   background-image:
     radial-gradient(circle at 80% 5%, rgba(var(--primary-rgb), 0.1), transparent 40%),
     radial-gradient(circle at 5% 95%, rgba(var(--tertiary-rgb), 0.06), transparent 35%);

@@ -107,6 +107,29 @@
     animation: cs-ring-pulse 1.8s ease-out infinite;
   }
 
+  // ─── Searching — cancel button ──────────────────────────────────────────
+  &__cancel {
+    margin-top: 4px;
+    padding: 9px 22px;
+    border-radius: 9px;
+    border: 1px solid var(--c-border);
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--c-tx2);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: var(--c-hover);
+      color: var(--c-tx);
+      border-color: var(--c-tx3);
+    }
+    &:active { transform: scale(0.97); }
+  }
+
   // Variant modifiers
   &--idle    { justify-content: center; }
   &--searching {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
-import { Smile, Tag, ArrowUp, X } from 'lucide-react';
+import { Smile, Tag, ArrowUp, X, SkipForward } from 'lucide-react';
 import type { ChatState } from './types';
 import './Composer.scss';
 
@@ -24,6 +24,7 @@ function NextButton({ onClick }: { onClick: () => void }) {
       title="Skip to next peer (Esc)"
       aria-label="Next peer"
     >
+      <SkipForward size={15} strokeWidth={2} aria-hidden className="composer__action-icon" />
       <span className="composer__action-label">Next</span>
       <kbd className="composer__action-kbd">ESC</kbd>
     </button>

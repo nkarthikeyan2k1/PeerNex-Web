@@ -5,7 +5,6 @@
   background-attachment: fixed;
   color: $text-color;
   min-height: 100vh;
-  font-family: sans-serif;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -29,12 +28,11 @@
 }
 
 .main-content {
-  padding: 8rem 1.5rem 6rem;
+  padding: 3rem 1.25rem 4rem;
   max-width: 80rem;
   margin: 0 auto;
-  
+
   @media (min-width: 768px) {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+    padding: 8rem 2.5rem 6rem;
   }
 }

@@ -10,11 +10,12 @@ export interface ConnectStateProps {
   /** Only 'idle' and 'searching' are valid — 'connected' shows the ChatLog instead */
   state: Exclude<ChatState, 'connected'>;
   onStart: () => void;
+  onCancel: () => void;
 }
 
 // ─── Searching overlay ───────────────────────────────────────────────────────
 
-function SearchingState() {
+function SearchingState({ onCancel }: { onCancel: () => void }) {
   return (
     <div className="connect-state connect-state--searching">
       <div className="connect-state__ring-wrap" aria-hidden>
@@ -29,6 +30,10 @@ function SearchingState() {
       <p className="connect-state__body">
         Matching you with someone online&nbsp;·&nbsp;anonymous
       </p>
+
+      <button className="connect-state__cancel" onClick={onCancel}>
+        Cancel
+      </button>
     </div>
   );
 }
@@ -59,8 +64,8 @@ function IdleState({ onStart }: { onStart: () => void }) {
 
 // ─── Public component ────────────────────────────────────────────────────────
 
-export default function ConnectState({ state, onStart }: ConnectStateProps) {
+export default function ConnectState({ state, onStart, onCancel }: ConnectStateProps) {
   return state === 'searching'
-    ? <SearchingState />
+    ? <SearchingState onCancel={onCancel} />
     : <IdleState onStart={onStart} />;
 }

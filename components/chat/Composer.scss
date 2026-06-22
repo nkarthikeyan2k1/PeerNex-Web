@@ -44,6 +44,11 @@
     letter-spacing: -0.01em;
   }
 
+  // Icon shown only on mobile (icon-only Next button)
+  &__action-icon {
+    display: none;
+  }
+
   &__action-kbd {
     font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
     font-size: 9.5px;
@@ -153,6 +158,37 @@
       background: var(--c-hover);
       color: var(--c-tx3);
       cursor: not-allowed;
+    }
+  }
+}
+
+// ─── Mobile: icon-only Next/End, more room for the input, safe-area padding ───
+@media (max-width: 640px) {
+  .composer {
+    gap: 8px;
+    padding-bottom: calc(2px + env(safe-area-inset-bottom, 0px));
+
+    &__action {
+      width: 46px;
+    }
+
+    // Next becomes icon-only; End keeps its X icon, drops the "End" label
+    &__action-label,
+    &__action-kbd {
+      display: none;
+    }
+
+    &__action-icon {
+      display: block;
+    }
+
+    &__well {
+      padding: 8px 8px 8px 14px;
+    }
+
+    // Hide secondary utility buttons to keep the input roomy
+    &__ghost-btn {
+      display: none;
     }
   }
 }

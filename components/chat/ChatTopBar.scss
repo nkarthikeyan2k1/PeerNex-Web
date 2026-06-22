@@ -23,6 +23,9 @@
     font-weight: 700;
     letter-spacing: -0.04em;
     color: var(--c-tx);
+    text-decoration: none;
+
+    &:hover { color: var(--c-accent); }
   }
 
   // ─── Right group: mode toggle + divider + status + settings ─────────────
@@ -168,4 +171,31 @@
 @keyframes topbar-blip {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.35; }
+}
+
+// ─── Mobile: condense so the bar fits narrow screens ──────────────────────────
+// online-count only, icon-only mode toggle, hide IDLE/ACTIVE status + dividers.
+@media (max-width: 640px) {
+  .chat-topbar {
+    padding: 0 14px;
+
+    &__left { gap: 10px; }
+    &__right { gap: 8px; }
+
+    // Drop dividers, the "online" word, and the status toggle entirely
+    &__divider,
+    &__online-label,
+    &__status {
+      display: none;
+    }
+
+    // Icon-only mode toggle
+    &__mode-btn {
+      padding: 7px 10px;
+    }
+
+    &__mode-label {
+      display: none;
+    }
+  }
 }

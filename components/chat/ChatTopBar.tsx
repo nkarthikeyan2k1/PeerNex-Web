@@ -1,6 +1,7 @@
 'use client';
 
 import { MessageSquare, Video, Settings } from 'lucide-react';
+import Link from 'next/link';
 import type { ChatMode } from './types';
 import './ChatTopBar.scss';
 
@@ -8,7 +9,6 @@ import './ChatTopBar.scss';
 
 export interface ChatTopBarProps {
   mode: ChatMode;
-  onModeChange: (mode: ChatMode) => void;
   /** Animated peer count — owner manages the interval, we just display it */
   online: number;
   connected: boolean;
@@ -16,9 +16,9 @@ export interface ChatTopBarProps {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const MODE_TABS: Array<{ key: ChatMode; label: string; Icon: React.ElementType }> = [
-  { key: 'text',  label: 'Text',  Icon: MessageSquare },
-  { key: 'video', label: 'Video', Icon: Video },
+const MODE_TABS: Array<{ key: ChatMode; label: string; href: string; Icon: React.ElementType }> = [
+  { key: 'text',  label: 'Text',  href: '/text',  Icon: MessageSquare },
+  { key: 'video', label: 'Video', href: '/video', Icon: Video },
 ];
 
 // ─── Sub-components (ISP: each piece only receives what it needs) ─────────────
@@ -37,20 +37,20 @@ function OnlineCount({ count }: { count: number }) {
   );
 }
 
-function ModeToggle({ mode, onChange }: { mode: ChatMode; onChange: (m: ChatMode) => void }) {
+function ModeToggle({ mode }: { mode: ChatMode }) {
   return (
     <div className="chat-topbar__mode" role="tablist" aria-label="Chat mode">
-      {MODE_TABS.map(({ key, label, Icon }) => (
-        <button
+      {MODE_TABS.map(({ key, label, href, Icon }) => (
+        <Link
           key={key}
+          href={href}
           role="tab"
           aria-selected={mode === key}
           className={`chat-topbar__mode-btn${mode === key ? ' chat-topbar__mode-btn--active' : ''}`}
-          onClick={() => onChange(key)}
         >
           <Icon size={14} strokeWidth={2} aria-hidden />
-          {label}
-        </button>
+          <span className="chat-topbar__mode-label">{label}</span>
+        </Link>
       ))}
     </div>
   );
@@ -79,20 +79,20 @@ function ConnectionStatus({ connected }: { connected: boolean }) {
 // ─── Public component ────────────────────────────────────────────────────────
 // Layout mirrors design: [PeerNex | online] ··· [mode toggle | status | ⚙]
 
-export default function ChatTopBar({ mode, onModeChange, online, connected }: ChatTopBarProps) {
+export default function ChatTopBar({ mode, online, connected }: ChatTopBarProps) {
   return (
     <header className="chat-topbar">
 
       {/* Left — branding + live peer count */}
       <div className="chat-topbar__left">
-        <span className="chat-topbar__brand">PeerNex</span>
+        <Link href="/" className="chat-topbar__brand">PeerNex</Link>
         <Divider />
         <OnlineCount count={online} />
       </div>
 
       {/* Right — controls */}
       <div className="chat-topbar__right">
-        <ModeToggle mode={mode} onChange={onModeChange} />
+        <ModeToggle mode={mode} />
         <Divider />
         <ConnectionStatus connected={connected} />
         <button className="chat-topbar__settings-btn" aria-label="Settings" title="Settings">
