@@ -5,7 +5,7 @@ import SystemLine from './SystemLine';
 import TerminalRow from './TerminalRow';
 import BubbleRow from './BubbleRow';
 import TypingIndicator from './TypingIndicator';
-import type { Message, ChatStyle } from './types';
+import type { Message, ChatStyle } from '../types';
 import './ChatLog.scss';
 
 export interface ChatLogProps {

@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { Mic, MicOff, Video, VideoOff, SkipForward, X, MessageSquare } from 'lucide-react';
 import VideoTile from './VideoTile';
-import ConnectState from './ConnectState';
+import ConnectState from '@/features/chat/components/ConnectState';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import type { ChatState } from './types';
+import type { ChatState } from '@/features/chat/types';
 import './VideoStage.scss';
 
 export interface VideoStageProps {

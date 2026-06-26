@@ -3,7 +3,6 @@
 export type ChatMode = 'text' | 'video';
 export type ChatState = 'idle' | 'searching' | 'connected';
 export type ChatStyle = 'bubbles' | 'terminal';
-export type VideoTileState = 'live' | 'waiting' | 'cam-off' | 'blocked';
 
 export interface Message {
   id: number;

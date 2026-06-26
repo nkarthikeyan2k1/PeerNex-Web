@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 import { Smile, Tag, ArrowUp, X, SkipForward } from 'lucide-react';
-import type { ChatState } from './types';
+import type { ChatState } from '../types';
 import './Composer.scss';
 
 export interface ComposerProps {

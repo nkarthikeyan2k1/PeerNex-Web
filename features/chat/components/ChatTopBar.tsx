@@ -2,7 +2,7 @@
 
 import { MessageSquare, Video, Settings } from 'lucide-react';
 import Link from 'next/link';
-import type { ChatMode } from './types';
+import type { ChatMode } from '../types';
 import './ChatTopBar.scss';
 
 // ─── Types ───────────────────────────────────────────────────────────────────

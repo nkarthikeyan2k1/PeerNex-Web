@@ -1,9 +1,7 @@
-'use client'
-
-import ChatScreen from '@/components/chat/ChatScreen';
+import VideoChat from '@/features/video-chat/VideoChat';
 
 const Page = () => {
-  return <ChatScreen initialMode="video" />;
-}
+  return <VideoChat />;
+};
 
 export default Page;

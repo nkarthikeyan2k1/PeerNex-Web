@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { User, VideoOff, Loader } from 'lucide-react';
-import type { VideoTileState } from './types';
+import type { VideoTileState } from '../types';
 import './VideoTile.scss';
 
 export interface VideoTileProps {

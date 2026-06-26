@@ -1,7 +1,7 @@
 'use client';
 
 import { Users, Search, Zap } from 'lucide-react';
-import type { ChatState } from './types';
+import type { ChatState } from '../types';
 import './ConnectState.scss';
 
 // ─── Types ───────────────────────────────────────────────────────────────────

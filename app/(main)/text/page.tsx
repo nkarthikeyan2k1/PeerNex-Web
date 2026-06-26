@@ -1,11 +1,7 @@
-'use client'
-
-import ChatScreen from '@/components/chat/ChatScreen';
+import TextChat from '@/features/text-chat/TextChat';
 
 const Page = () => {
-  return (
-    <ChatScreen />
-  )
-}
+  return <TextChat />;
+};
 
-export default Page
+export default Page;
