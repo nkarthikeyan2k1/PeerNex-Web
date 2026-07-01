@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { clientEnv } from '@/lib/clientEnv';
 
 interface SocketContextType {
     socket: Socket | null;
@@ -23,11 +24,13 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         if (typeof window === "undefined") return;
 
-        // Initialize the socket once on client side
-        // No explicit URL — connects to current page origin, proxied by Next.js to the backend
-        const socketInstance = io(process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL, {
+        // Backend URL is injected at runtime into window.PEER_NEX (see app/(main)/layout.tsx),
+        // so we read it synchronously and connect directly — native WebSockets, no fetch race.
+        // Empty/missing url falls back to a same-origin connection for local dev.
+        const socketUrl = clientEnv().SOCKET_URL;
+        const socketInstance = io(socketUrl || undefined, {
             transports: ["polling", "websocket"],
-            autoConnect: false, // Connect manually in useEffect
+            autoConnect: false,
         });
         socketRef.current = socketInstance;
 
@@ -42,8 +45,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
         socketInstance.on('connect', onConnect);
         socketInstance.on('disconnect', onDisconnect);
-
-        // Manually trigger connect
         socketInstance.connect();
 
         return () => {
