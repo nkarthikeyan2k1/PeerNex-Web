@@ -6,8 +6,7 @@ import './interest-tags.scss'
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const InterestTags = () => {
-  const [value, setValue] = useLocalStorage('interests', JSON.stringify([]));
-  const [tags, setTags] = useState<string[]>(JSON.parse(value));
+  const [tags, setTags] = useLocalStorage<string[]>('interests', []);
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -20,23 +19,17 @@ const InterestTags = () => {
       e.preventDefault();
       const newTag = inputValue.trim().toLowerCase();
       if (newTag && !tags.includes(newTag)) {
-        const updatedTags = [...tags, newTag];
-        setTags(updatedTags);
-        setValue(JSON.stringify(updatedTags));
+        setTags([...tags, newTag]);
       }
       setInputValue('');
     } else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
       // Remove the last tag when pressing backspace on an empty input
-      const updatedTags = tags.slice(0, -1);
-      setTags(updatedTags);
-      setValue(JSON.stringify(updatedTags));
-      
+      setTags(tags.slice(0, -1));
     }
   };
 
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
-    setValue(JSON.stringify(tags.filter((tag) => tag !== tagToRemove)));
   };
 
   // Adjust textarea height automatically based on content

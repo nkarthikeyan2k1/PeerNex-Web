@@ -1,0 +1,50 @@
+// SocketGate — slim top banner shown while socket is connecting.
+// Uses the same --c-* design tokens as the rest of the chat UI.
+
+.socket-gate-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  height: 34px;
+  padding: 0 16px;
+
+  background: var(--c-surface, #f4f4f5);
+  border-bottom: 1px solid var(--c-border, #e4e4e7);
+
+  font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace);
+  font-size: 12px;
+  color: var(--c-tx2, #52525b);
+
+  .dark & {
+    background: var(--c-surface, #0c0c0f);
+    border-bottom-color: var(--c-border, #27272a);
+    color: var(--c-tx2, #a1a1aa);
+  }
+
+  &__dot {
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #f59e0b; // amber — "warming up" signal
+    box-shadow: 0 0 8px #f59e0b;
+    animation: gate-pulse 1.4s ease-in-out infinite;
+  }
+
+  &__text {
+    letter-spacing: 0.01em;
+  }
+}
+
+@keyframes gate-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}

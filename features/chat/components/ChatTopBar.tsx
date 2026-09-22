@@ -10,7 +10,7 @@ import './ChatTopBar.scss';
 export interface ChatTopBarProps {
   mode: ChatMode;
   /** Animated peer count — owner manages the interval, we just display it */
-  online: number;
+  online: number | null;
   connected: boolean;
 }
 
@@ -27,11 +27,11 @@ function Divider() {
   return <span className="chat-topbar__divider" aria-hidden />;
 }
 
-function OnlineCount({ count }: { count: number }) {
+function OnlineCount({ count = 0 }: { count: number | null }) {
   return (
     <div className="chat-topbar__online">
       <span className="chat-topbar__online-dot" aria-hidden />
-      <span className="chat-topbar__online-count">{count.toLocaleString()}+</span>
+      <span className="chat-topbar__online-count">{count?.toLocaleString() || 0}+</span>
       <span className="chat-topbar__online-label">online</span>
     </div>
   );

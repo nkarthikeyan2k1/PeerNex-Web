@@ -5,6 +5,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 import ChatTopBar from '@/features/chat/components/ChatTopBar';
 import ChatLog from '@/features/chat/components/ChatLog';
 import Composer from '@/features/chat/components/Composer';
+import SocketGate from '@/features/chat/components/SocketGate';
 import { useChatSession } from '@/features/chat/hooks/useChatSession';
 import { useOnlineCount } from '@/features/chat/hooks/useOnlineCount';
 import { toMessageView } from '@/features/chat/lib/messageView';
@@ -26,39 +27,41 @@ export default function VideoChat() {
   const { remoteStream } = useWebRTC({ socket, chatState, localStreamRef });
 
   return (
-    <div className="chat-screen chat-screen--video">
-      <ChatTopBar mode="video" online={online} connected={connected} />
+    <SocketGate>
+      <div className="chat-screen chat-screen--video">
+        <ChatTopBar mode="video" online={online} connected={connected} />
 
-      <VideoStage
-        chatState={chatState}
-        micOff={micOff}
-        camOff={camOff}
-        onMicToggle={toggleMic}
-        onCamToggle={toggleCam}
-        onNext={next}
-        onStop={stop}
-        onStart={start}
-        localStream={localStream}
-        remoteStream={remoteStream}
-        mediaError={mediaError}
-      >
-        {connected ? (
-          <ChatLog messages={toMessageView(messages)} style="terminal" isTyping={false} />
-        ) : (
-          <div className="chat-screen__video-empty">
-            Chat appears once you&apos;re connected.
-          </div>
-        )}
-
-        <Composer
-          state={chatState}
-          text={text}
-          onTextChange={setText}
-          onSend={sendMessage}
+        <VideoStage
+          chatState={chatState}
+          micOff={micOff}
+          camOff={camOff}
+          onMicToggle={toggleMic}
+          onCamToggle={toggleCam}
           onNext={next}
           onStop={stop}
-        />
-      </VideoStage>
-    </div>
+          onStart={start}
+          localStream={localStream}
+          remoteStream={remoteStream}
+          mediaError={mediaError}
+        >
+          {connected ? (
+            <ChatLog messages={toMessageView(messages)} style="terminal" isTyping={false} />
+          ) : (
+            <div className="chat-screen__video-empty">
+              Chat appears once you&apos;re connected.
+            </div>
+          )}
+
+          <Composer
+            state={chatState}
+            text={text}
+            onTextChange={setText}
+            onSend={sendMessage}
+            onNext={next}
+            onStop={stop}
+          />
+        </VideoStage>
+      </div>
+    </SocketGate>
   );
 }

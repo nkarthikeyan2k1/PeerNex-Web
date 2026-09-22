@@ -1,18 +1,35 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSocket } from '@/providers/SocketProvider';
 
-/** Decorative live peer counter that drifts up and down on an interval. */
-export function useOnlineCount(initial = 16128, intervalMs = 2600) {
-  const [online, setOnline] = useState(initial);
+interface UserCountPayload {
+  totalUsers: number;
+  waitingUsers: number;
+}
+
+/**
+ * Subscribes to the server's `userCountUpdate` event and returns the real
+ * connected-user count. Pulls the socket from SocketProvider context
+ * automatically. Falls back to `null` while the socket is not yet
+ * connected (callers can render a placeholder like "—" or a spinner).
+ */
+export function useOnlineCount(): number | null {
+  const { socket } = useSocket();
+  const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const iv = setInterval(
-      () => setOnline(n => n + Math.floor(Math.random() * 7) - 3),
-      intervalMs,
-    );
-    return () => clearInterval(iv);
-  }, [intervalMs]);
+    if (!socket) return;
 
-  return online;
+    const onUpdate = ({ totalUsers }: UserCountPayload) => {
+      setCount(totalUsers);
+    };
+
+    socket.on('userCountUpdate', onUpdate);
+    return () => {
+      socket.off('userCountUpdate', onUpdate);
+    };
+  }, [socket]);
+
+  return count;
 }
