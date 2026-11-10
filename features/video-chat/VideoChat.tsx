@@ -24,7 +24,7 @@ export default function VideoChat() {
 
   const { localStream, localStreamRef, mediaError, micOff, camOff, toggleMic, toggleCam } =
     useLocalMedia(true);
-  const { remoteStream } = useWebRTC({ socket, chatState, localStreamRef });
+  const { remoteStream, remoteMedia } = useWebRTC({ socket, chatState, localStreamRef, micOff, camOff });
 
   return (
     <SocketGate>
@@ -42,6 +42,8 @@ export default function VideoChat() {
           onStart={start}
           localStream={localStream}
           remoteStream={remoteStream}
+          remoteMicOff={remoteMedia.micOff}
+          remoteCamOff={remoteMedia.camOff}
           mediaError={mediaError}
         >
           {connected ? (

@@ -94,10 +94,10 @@ export default function ChatTopBar({ mode, online, connected }: ChatTopBarProps)
       <div className="chat-topbar__right">
         <ModeToggle mode={mode} />
         <Divider />
-        <ConnectionStatus connected={connected} />
-        <button className="chat-topbar__settings-btn" aria-label="Settings" title="Settings">
+        {/* <ConnectionStatus connected={connected} /> */}
+        {/* <button className="chat-topbar__settings-btn" aria-label="Settings" title="Settings">
           <Settings size={17} strokeWidth={1.75} />
-        </button>
+        </button> */}
       </div>
 
     </header>

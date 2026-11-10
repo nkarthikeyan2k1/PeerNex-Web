@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { User, VideoOff, Loader } from 'lucide-react';
+import { User, VideoOff, MicOff, Loader } from 'lucide-react';
 import type { VideoTileState } from '../types';
 import './VideoTile.scss';
 
@@ -11,6 +11,8 @@ export interface VideoTileProps {
   state: VideoTileState;
   stream?: MediaStream | null;
   muted?: boolean;
+  /** Show a muted-mic icon on the name chip */
+  micOff?: boolean;
   pip?: boolean;
   errorMessage?: string;
 }
@@ -24,22 +26,25 @@ function LiveBadge() {
   );
 }
 
-function NameChip({ label, state }: { label: string; state: VideoTileState }) {
+function NameChip({ label, state, micOff }: { label: string; state: VideoTileState; micOff: boolean }) {
   return (
     <div className="video-tile__name-chip">
       <span className={`video-tile__name-dot video-tile__name-dot--${state}`} aria-hidden />
       <span className="video-tile__name-label">{label}</span>
+      {micOff && (
+        <MicOff size={13} strokeWidth={2} className="video-tile__mic-off" aria-label="Muted" />
+      )}
     </div>
   );
 }
 
-function WaitingOverlay() {
+function WaitingOverlay({ text }: { text: string }) {
   return (
     <div className="video-tile__overlay">
       <div className="video-tile__avatar">
         <Loader size={28} strokeWidth={1.5} className="video-tile__spinner" aria-hidden />
       </div>
-      <p className="video-tile__overlay-text">Waiting for peer…</p>
+      <p className="video-tile__overlay-text">{text}</p>
     </div>
   );
 }
@@ -85,6 +90,7 @@ export default function VideoTile({
   state,
   stream,
   muted = false,
+  micOff = false,
   pip = false,
   errorMessage,
 }: VideoTileProps) {
@@ -128,11 +134,11 @@ export default function VideoTile({
 
       {showLetterAv && <LetterAvatar label={label} pip={pip} />}
       {showBlocked  && <BlockedOverlay message={errorMessage ?? 'Camera access blocked.'} />}
-      {showWaiting  && <WaitingOverlay />}
+      {showWaiting  && <WaitingOverlay text={who === 'you' ? 'Starting camera…' : 'Waiting for peer…'} />}
       {showCamOff   && <CamOffOverlay label={label} />}
 
       {state === 'live' && <LiveBadge />}
-      <NameChip label={label} state={state} />
+      <NameChip label={label} state={state} micOff={micOff} />
     </div>
   );
 }

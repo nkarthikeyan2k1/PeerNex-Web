@@ -77,6 +77,12 @@ $vt-dot-off:    #71717a;    // zinc-500
     display: block;
   }
 
+  // Your own preview is mirrored, like a selfie camera. Only the local view —
+  // the stream sent to the stranger is unaffected.
+  &--you &__video {
+    transform: scaleX(-1);
+  }
+
   // ─── Overlay (waiting / cam-off) ─────────────────────────────────────────
   &__overlay {
     @include flex-col(14px, center, center);
@@ -164,6 +170,11 @@ $vt-dot-off:    #71717a;    // zinc-500
     &--live    { background: $vt-dot-live; box-shadow: 0 0 6px $vt-dot-live; }
     &--waiting { background: $vt-dot-wait; animation: vt-wait-pulse 1.6s ease-in-out infinite; }
     &--cam-off { background: $vt-dot-off; }
+  }
+
+  &__mic-off {
+    flex-shrink: 0;
+    color: #f87171;  // red-400
   }
 
   &__name-label {

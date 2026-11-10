@@ -21,6 +21,9 @@ export interface VideoStageProps {
   children: React.ReactNode;
   localStream?: MediaStream | null;
   remoteStream?: MediaStream | null;
+  /** Stranger's announced mic/cam state */
+  remoteMicOff?: boolean;
+  remoteCamOff?: boolean;
   mediaError?: string | null;
 }
 
@@ -28,6 +31,8 @@ export interface VideoStageProps {
 
 interface ControlBarProps {
   chatState: ChatState;
+  /** Local camera is live — mic/cam toggles work in preview too, not just in a call. */
+  mediaReady: boolean;
   micOff: boolean;
   camOff: boolean;
   onMicToggle: () => void;
@@ -38,6 +43,7 @@ interface ControlBarProps {
 
 function ControlBar({
   chatState,
+  mediaReady,
   micOff,
   camOff,
   onMicToggle,
@@ -45,7 +51,6 @@ function ControlBar({
   onNext,
   onStop,
 }: ControlBarProps) {
-  const connected  = chatState === 'connected';
   const actionable = chatState !== 'idle';
 
   return (
@@ -53,7 +58,7 @@ function ControlBar({
       <button
         className={`vs-controls__btn${micOff ? ' vs-controls__btn--off' : ''}`}
         onClick={onMicToggle}
-        disabled={!connected}
+        disabled={!mediaReady}
         aria-label={micOff ? 'Unmute mic' : 'Mute mic'}
         title="Mic"
       >
@@ -63,7 +68,7 @@ function ControlBar({
       <button
         className={`vs-controls__btn${camOff ? ' vs-controls__btn--off' : ''}`}
         onClick={onCamToggle}
-        disabled={!connected}
+        disabled={!mediaReady}
         aria-label={camOff ? 'Turn camera on' : 'Turn camera off'}
         title="Camera"
       >
@@ -110,6 +115,8 @@ export default function VideoStage({
   children,
   localStream,
   remoteStream,
+  remoteMicOff = false,
+  remoteCamOff = false,
   mediaError,
 }: VideoStageProps) {
   const connected = chatState === 'connected';
@@ -124,30 +131,44 @@ export default function VideoStage({
         ? 'live'
         : 'waiting';
 
-  // ── Mobile: immersive full-bleed video + slide-up chat sheet ────────────────
+  const youTile = (
+    <VideoTile
+      who="you"
+      label="You"
+      state={youState}
+      muted
+      micOff={micOff}
+      stream={localStream}
+      errorMessage={mediaError ?? undefined}
+    />
+  );
+
+  // Left/top slot: the stranger once matched, otherwise the start / searching panel.
+  const strangerSlot = connected ? (
+    <VideoTile
+      who="stranger"
+      label="Stranger"
+      state={remoteCamOff ? 'cam-off' : remoteStream ? 'live' : 'waiting'}
+      micOff={remoteMicOff}
+      stream={remoteStream}
+    />
+  ) : (
+    <div className="video-stage__idle-box">
+      <ConnectState state={chatState} onStart={onStart} onCancel={onStop} />
+    </div>
+  );
+
+  // ── Mobile: stranger on top, you below (50/50), floating controls + chat sheet ──
   if (isMobile) {
     return (
       <div className="video-stage video-stage--mobile">
-        {connected ? (
-          <>
-            <VideoTile
-              who="stranger"
-              label="Stranger"
-              state={remoteStream ? 'live' : 'waiting'}
-              stream={remoteStream}
-            />
-            <div className="video-stage__pip video-stage__pip--mobile">
-              <VideoTile
-                who="you"
-                label="You"
-                state={youState}
-                muted
-                pip
-                stream={localStream}
-                errorMessage={mediaError ?? undefined}
-              />
-            </div>
+        <div className="video-stage__tiles">
+          {strangerSlot}
+          {youTile}
+        </div>
 
+        {connected && (
+          <>
             {/* Floating glass control bar */}
             <div className="vs-float">
               <button
@@ -191,16 +212,8 @@ export default function VideoStage({
                 <X size={18} strokeWidth={2.5} />
               </button>
             </div>
-          </>
-        ) : (
-          <div className="video-stage__idle-box video-stage__idle-box--mobile">
-            <ConnectState state={chatState} onStart={onStart} onCancel={onStop} />
-          </div>
-        )}
 
-        {/* Chat bottom sheet */}
-        {connected && (
-          <>
+            {/* Chat bottom sheet */}
             <div
               className={`vs-sheet-scrim${chatOpen ? ' vs-sheet-scrim--open' : ''}`}
               onClick={() => setChatOpen(false)}
@@ -227,47 +240,23 @@ export default function VideoStage({
     );
   }
 
-  // ── Desktop / tablet: video column + side chat panel ────────────────────────
+  // ── Desktop / tablet: [stranger | you] tiles + side chat panel ──────────────
   return (
     <div className="video-stage">
 
       {/* ── Left: video column ──────────────────────────────────────────────── */}
       <div className="video-stage__col">
 
-        {/* Tile area — fills available height */}
-        <div className="video-stage__tile-area">
-          {connected ? (
-            <>
-              {/* Stranger full tile */}
-              <VideoTile
-                who="stranger"
-                label="Stranger"
-                state={remoteStream ? 'live' : 'waiting'}
-                stream={remoteStream}
-              />
-              <div className="video-stage__pip">
-                <VideoTile
-                  who="you"
-                  label="You"
-                  state={mediaError ? 'blocked' : camOff ? 'cam-off' : localStream ? 'live' : 'waiting'}
-                  muted
-                  pip
-                  stream={localStream}
-                  errorMessage={mediaError ?? undefined}
-                />
-              </div>
-            </>
-          ) : (
-            /* Not connected: ConnectState overlay inside a dark bordered box */
-            <div className="video-stage__idle-box">
-              <ConnectState state={chatState} onStart={onStart} onCancel={onStop} />
-            </div>
-          )}
+        {/* Two equal tiles — your camera is always visible, even before a match */}
+        <div className="video-stage__tiles">
+          {strangerSlot}
+          {youTile}
         </div>
 
         {/* Control bar */}
         <ControlBar
           chatState={chatState}
+          mediaReady={!!localStream}
           micOff={micOff}
           camOff={camOff}
           onMicToggle={onMicToggle}

@@ -5,9 +5,19 @@ import type { Socket } from 'socket.io-client';
 import type { ChatState } from '@/features/chat/types';
 import { ICE_SERVERS } from '@/Constant/ICE_Constant';
 
+/** Peer's mic/cam state. A disabled track still sends (black/silent) frames, so
+ *  the receiver can't detect it — each side announces it explicitly instead. */
+export interface MediaState {
+  micOff: boolean;
+  camOff: boolean;
+}
+
+const MEDIA_ON: MediaState = { micOff: false, camOff: false };
+
 type SignalPayload =
   | { type: RTCSdpType; sdp: string }
-  | { candidate: RTCIceCandidateInit };
+  | { candidate: RTCIceCandidateInit }
+  | { media: MediaState };
 
 interface UseWebRTCParams {
   socket: Socket | null;
@@ -15,6 +25,9 @@ interface UseWebRTCParams {
   chatState: ChatState;
   /** Local media tracks to publish, owned by `useLocalMedia`. */
   localStreamRef: RefObject<MediaStream | null>;
+  /** Local mic/cam toggles — announced to the peer so their UI can reflect them. */
+  micOff: boolean;
+  camOff: boolean;
 }
 
 /**
@@ -23,14 +36,16 @@ interface UseWebRTCParams {
  * mounts it. Teardown is driven off `chatState` so next / stop / peerLeft /
  * disconnect all converge on a single close path.
  */
-export function useWebRTC({ socket, chatState, localStreamRef }: UseWebRTCParams) {
+export function useWebRTC({ socket, chatState, localStreamRef, micOff, camOff }: UseWebRTCParams) {
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const [remoteMedia, setRemoteMedia] = useState<MediaState>(MEDIA_ON);
   const peerConnRef = useRef<RTCPeerConnection | null>(null);
 
   const closePeerConnection = () => {
     peerConnRef.current?.close();
     peerConnRef.current = null;
     setRemoteStream(null);
+    setRemoteMedia(MEDIA_ON);
   };
 
   // While a call is live, tear the peer connection down when we leave it — the
@@ -39,6 +54,14 @@ export function useWebRTC({ socket, chatState, localStreamRef }: UseWebRTCParams
     if (chatState !== 'connected') return;
     return () => closePeerConnection();
   }, [chatState]);
+
+  // Announce our mic/cam state on every match (so a camera turned off during
+  // preview is reflected right away) and whenever it changes mid-call. Rides
+  // the server's generic `signal` relay — no server-side change needed.
+  useEffect(() => {
+    if (!socket || chatState !== 'connected') return;
+    socket.emit('signal', { signal: { media: { micOff, camOff } } });
+  }, [socket, chatState, micOff, camOff]);
 
   useEffect(() => {
     if (!socket) return;
@@ -71,6 +94,11 @@ export function useWebRTC({ socket, chatState, localStreamRef }: UseWebRTCParams
     };
 
     const onSignal = async ({ signal }: { signal: SignalPayload }) => {
+      if ('media' in signal) {
+        setRemoteMedia(signal.media);
+        return;
+      }
+
       const pc = peerConnRef.current;
       if (!pc) return;
 
@@ -95,5 +123,5 @@ export function useWebRTC({ socket, chatState, localStreamRef }: UseWebRTCParams
     };
   }, [socket, localStreamRef]);
 
-  return { remoteStream };
+  return { remoteStream, remoteMedia };
 }

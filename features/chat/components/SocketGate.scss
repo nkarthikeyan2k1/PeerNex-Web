@@ -42,6 +42,29 @@
   &__text {
     letter-spacing: 0.01em;
   }
+
+  // All retries exhausted — red dot, no pulse, reload button
+  &--failed &__dot {
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+    animation: none;
+  }
+
+  &__reload {
+    margin-left: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--c-hover, rgba(127, 127, 127, 0.15));
+    }
+  }
 }
 
 @keyframes gate-pulse {
